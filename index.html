@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Interactive Plotly Plot</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
             display: flex;
@@ -24,22 +25,27 @@
     <h1>My Interactive Plotly Plot</h1>
     <div id="plotly-graph"></div>
 
-    <!-- Load Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
     <script>
-        // Load the data from your power_3D_plot.html
+        // Fetch the HTML file that contains the Plotly plot data
         fetch('power_3D_plot.html')
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
             .then(html => {
-                // Create a temporary element to parse the HTML
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
-                // Extract the plotly data from the temporary element
-                const plotData = tempDiv.getElementsByTagName('script')[0].innerHTML;
-                // Evaluate the script to get the data
-                eval(plotData);
-                // Draw the plot with the extracted data
+
+                // Get the Plotly data and layout from the fetched HTML
+                const plotDataScript = tempDiv.querySelector('script');
+                if (!plotDataScript) {
+                    throw new Error('No script tag found in power_3D_plot.html');
+                }
+                eval(plotDataScript.innerHTML);  // Execute the script to define `data` and `layout`
+
+                // Render the plot
                 Plotly.newPlot('plotly-graph', data, layout);
             })
             .catch(error => {
@@ -48,3 +54,4 @@
     </script>
 </body>
 </html>
+
