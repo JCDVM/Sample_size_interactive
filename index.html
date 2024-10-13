@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Interactive Plot</title>
+    <title>My Interactive Plotly Plot</title>
     <style>
         body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
             background-color: #f8f9fa;
@@ -22,7 +23,28 @@
 <body>
     <h1>My Interactive Plotly Plot</h1>
     <div id="plotly-graph"></div>
+
+    <!-- Load Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="power_3D_plot.html"></script> <!-- Replace with your actual plot file -->
+
+    <script>
+        // Load the data from your power_3D_plot.html
+        fetch('power_3D_plot.html')
+            .then(response => response.text())
+            .then(html => {
+                // Create a temporary element to parse the HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                // Extract the plotly data from the temporary element
+                const plotData = tempDiv.getElementsByTagName('script')[0].innerHTML;
+                // Evaluate the script to get the data
+                eval(plotData);
+                // Draw the plot with the extracted data
+                Plotly.newPlot('plotly-graph', data, layout);
+            })
+            .catch(error => {
+                console.error('Error fetching the plot:', error);
+            });
+    </script>
 </body>
 </html>
